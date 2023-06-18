@@ -25,15 +25,59 @@ namespace CraftEditor.Pages
             InitializeComponent();
         }
 
+        private void RefreshModsListBox()
+        {
+            foreach (string recipe in Directory.GetFiles($"{App.AppDataPath}/{SelectedModName}/", "*.json"))
+            {
+                string image = string.Empty;
+                if (File.Exists(recipe.Replace(".json", ".png")))
+                    image = recipe.Replace(".json", ".png");
+                ModRecipeListBox.Items.Add(new UserControls.ModUserControl(image, recipe.Split("/").Last()));
+            }
+        }
+
+        private async Task GetRecipesImages(UserControls.ModUserControl selectedRecipe)
+        {
+            List<ZipArchiveEntry> images = ZipFile.OpenRead($"{defaultModsDerectory}/{SelectedModName}.jar").Entries.Where(x => x.FullName.EndsWith(".png")).ToList();
+
+            selectedRecipe.LoadProgressBar.Visibility = Visibility.Visible;
+            selectedRecipe.LoadProgressBar.Opacity = 1;
+            selectedRecipe.LoadProgressBar.Maximum = images.Count;
+
+            for (int i = 0; i < images.Count; i++)
+            {
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        if (!File.Exists($"{App.AppDataPath}/{SelectedModName}/{images[i].Name.Replace(".json", ".png")}"))
+                        {
+                            ZipArchiveEntry imageRecipes = ZipFile.OpenRead($"{defaultModsDerectory}/{SelectedModName}.jar").Entries.FirstOrDefault(x => x.FullName.Contains(images[i].Name.Replace(".json", ".png")));
+                            imageRecipes?.ExtractToFile($"{App.AppDataPath}/{SelectedModName}/{images[i].Name.Replace(".json", ".png")}", true);
+                        }
+                    }
+                    catch { }
+                });
+                if ((UserControls.ModUserControl)ModsListBox.SelectedItem == selectedRecipe)
+                    selectedRecipe.LoadProgressBar.Value = i;
+            }
+
+            if ((UserControls.ModUserControl)ModsListBox.SelectedItem == selectedRecipe)
+            {
+                selectedRecipe.LoadProgressBar.Value = images.Count;
+                selectedRecipe.LoadProgressBar.Opacity = 0.50;
+            }
+        }
+
         private async Task GetRecipes(UserControls.ModUserControl selectedRecipe)
         {
             ModRecipeListBox.Items.Clear();
 
-            List<ZipArchiveEntry> recipes = ZipFile.OpenRead($"{defaultModsDerectory}/{SelectedModName}.jar").Entries.Where(x => x.FullName.Contains("recipes")).ToList();
+            List<ZipArchiveEntry> recipes = ZipFile.OpenRead($"{defaultModsDerectory}/{SelectedModName}.jar").Entries.Where(x => x.FullName.Contains("recipes")).Where(x => x.FullName.EndsWith(".json")).ToList();
             Directory.CreateDirectory($"{App.AppDataPath}/{SelectedModName}");
 
-
             selectedRecipe.LoadProgressBar.Visibility = Visibility.Visible;
+            selectedRecipe.LoadProgressBar.Opacity = 1;
             selectedRecipe.LoadProgressBar.Maximum = recipes.Count;
 
             for (int i = 0; i < recipes.Count; i++)
@@ -44,12 +88,7 @@ namespace CraftEditor.Pages
                     {
                         if (!File.Exists($"{App.AppDataPath}/{SelectedModName}/{recipes[i].Name}"))
                         {
-                            if (recipes[i].FullName.EndsWith(".json"))
-                            {
-                                ZipArchiveEntry imageRecipes = ZipFile.OpenRead($"{defaultModsDerectory}/{SelectedModName}.jar").Entries.FirstOrDefault(x => x.FullName.Contains(recipes[i].Name.Replace(".json", ".png")));
-                                recipes[i].ExtractToFile($"{App.AppDataPath}/{SelectedModName}/{recipes[i].Name}", true);
-                                imageRecipes?.ExtractToFile($"{App.AppDataPath}/{SelectedModName}/{recipes[i].Name.Replace(".json", ".png")}", true);
-                            }
+                            recipes[i].ExtractToFile($"{App.AppDataPath}/{SelectedModName}/{recipes[i].Name}", true);
                         }
                     }
                     catch { }
@@ -59,6 +98,7 @@ namespace CraftEditor.Pages
                 else
                     return;
             }
+
             if ((UserControls.ModUserControl)ModsListBox.SelectedItem == selectedRecipe)
             {
                 selectedRecipe.LoadProgressBar.Value = recipes.Count;
@@ -138,13 +178,11 @@ namespace CraftEditor.Pages
 
             await GetRecipes((UserControls.ModUserControl)ModsListBox.SelectedItem);
 
-            foreach (string recipe in Directory.GetFiles($"{App.AppDataPath}/{SelectedModName}/", "*.json"))
-            {
-                string image = string.Empty;
-                if (File.Exists(recipe.Replace(".json", ".png")))
-                    image = recipe.Replace(".json", ".png");
-                ModRecipeListBox.Items.Add(new UserControls.ModUserControl(image, recipe.Split("/").Last()));
-            }
+            RefreshModsListBox();
+
+            await GetRecipesImages((UserControls.ModUserControl)ModsListBox.SelectedItem);
+
+            RefreshModsListBox();
         }
     }
 }
