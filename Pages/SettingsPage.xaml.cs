@@ -31,11 +31,19 @@ namespace CraftEditor.Pages
         {
             long size = 0;
             DirectoryInfo directoryInfo = new DirectoryInfo(App.AppDataPath);
-            foreach (FileInfo file in directoryInfo.GetFiles("*", SearchOption.AllDirectories))
+            if (directoryInfo.GetFiles("*", SearchOption.AllDirectories).Length > 0)
             {
-                size += file.Length;
+                foreach (FileInfo file in directoryInfo.GetFiles("*", SearchOption.AllDirectories))
+                {
+                    await Task.Run(() =>
+                    {
+                        size += file.Length;
+                    });
+                    MemoryUsageTextBlock.Text = $"Используется {Math.Round((double)size / 1024 / 1024, 1)} мб";
+                }
             }
-            MemoryUsageTextBlock.Text = $"Используется {Math.Round((double)size / 1024 / 1024, 1)} мб";
+            else
+                MemoryUsageTextBlock.Text = "Используется 0 мб";
         }
 
         private async void ClearCacheButton_Click(object sender, RoutedEventArgs e)
@@ -43,6 +51,15 @@ namespace CraftEditor.Pages
             foreach(string file in Directory.GetFiles(App.AppDataPath, "*", SearchOption.AllDirectories))
             {
                 File.Delete(file);
+            }
+
+            foreach (string directory in Directory.GetDirectories(App.AppDataPath, "*", SearchOption.AllDirectories))
+            {
+                try
+                {
+                    Directory.Delete(directory, true);
+                }
+                catch { }
             }
 
             await GetUsageMemory();

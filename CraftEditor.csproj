@@ -10,10 +10,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Icons\back-icon.png" />
+    <None Remove="Assets\Images\default-block.png" />
+    <None Remove="Assets\Images\default-item.png" />
     <None Remove="Assets\Images\no-mod-image.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\Icons\back-icon.png" />
+    <Resource Include="Assets\Images\default-block.png" />
+    <Resource Include="Assets\Images\default-item.png" />
     <Resource Include="Assets\Images\no-mod-image.png" />
   </ItemGroup>
 

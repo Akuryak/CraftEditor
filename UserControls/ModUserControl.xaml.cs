@@ -67,13 +67,5 @@ namespace CraftEditor.UserControls
             }
             catch { }
         }
-
-        private void LoadProgressBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            if (LoadProgressBar.Value != LoadProgressBar.Maximum)
-                LoadProgressTextBlock.Text = $"{LoadProgressBar.Value}/{LoadProgressBar.Maximum}";
-            else
-                LoadProgressTextBlock.Text = "Завершено";
-        }
     }
 }

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CraftEditor.Windows"
         mc:Ignorable="d"
-        Title="MessageBox" Height="100" Width="200" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" ShowActivated="True" WindowState="Normal" WindowStyle="ToolWindow" SizeToContent="WidthAndHeight">
+        Title="MessageBox" Height="100" Width="200" MaxWidth="600" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" ShowActivated="True" WindowState="Normal" WindowStyle="ToolWindow" SizeToContent="WidthAndHeight">
     
     <Grid>
         <TextBlock x:Name="MessageBoxTextBlock"/>

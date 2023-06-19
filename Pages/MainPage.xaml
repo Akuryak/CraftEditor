@@ -6,18 +6,18 @@
       xmlns:local="clr-namespace:CraftEditor.Pages"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800" Loaded="Page_Loaded"
-      Title="MainPage">
+      Title="MainPage" Background="White">
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.05*"/>
+            <ColumnDefinition Width="0.01*"/>
             <ColumnDefinition/>
-            <ColumnDefinition Width="0.05*"/>
+            <ColumnDefinition Width="0.01*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.05*"/>
+            <RowDefinition Height="0.01*"/>
             <RowDefinition/>
-            <RowDefinition Height="0.05*"/>
+            <RowDefinition Height="0.01*"/>
         </Grid.RowDefinitions>
         <Grid Grid.Column="1" Grid.Row="1">
             <Grid.RowDefinitions>
@@ -41,10 +41,19 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
                     <ColumnDefinition/>
+                    <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
-                <ListBox x:Name="ModsListBox" Grid.Column="0" Grid.Row="0" HorizontalContentAlignment="Stretch" SelectionChanged="ModsListBox_SelectionChanged"/>
-                <ListBox x:Name="ModRecipeListBox" Grid.Column="1" Grid.Row="0" HorizontalContentAlignment="Stretch"/>
+                <Button x:Name="BackButton" Background="Transparent" Visibility="Collapsed" VerticalAlignment="Top" Margin="15" Grid.Column="1" Click="BackButton_Click">
+                    <Image Source="../Assets/Icons/back-icon.png" Width="50" Height="50"/>
+                </Button>
+                <ListBox x:Name="ModsListBox" VerticalAlignment="Top" HorizontalContentAlignment="Stretch" Grid.Column="0" SelectionChanged="ModsListBox_SelectionChanged"/>
+
+                <ListBox x:Name="ModRecipeListBox" Margin="0,75,0,0" Grid.ColumnSpan="2" Grid.Row="0" HorizontalContentAlignment="Stretch" Visibility="Collapsed"/>
+                <TreeView x:Name="ItemsAndBlocksTreeView" Grid.Column="4">
+                    <TreeViewItem Header="Загрузка..." VerticalContentAlignment="Center"/>
+                </TreeView>
             </Grid>
         </Grid>
     </Grid>
